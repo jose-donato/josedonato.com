@@ -119,6 +119,18 @@ const isActive = (href: string) => {
       activeBackground.style.opacity = '1';
     };
 
+    // Get relative position of element within nav container
+    const getRelativePosition = (element: HTMLElement) => {
+      const rect = element.getBoundingClientRect();
+      const navRect = nav.getBoundingClientRect();
+      return {
+        left: rect.left - navRect.left,
+        top: rect.top - navRect.top,
+        width: rect.width,
+        height: rect.height
+      };
+    };
+
     // Get stored previous position for animation
     const storedPosition = localStorage.getItem('floater-nav-position');
     const wasNavigated = localStorage.getItem('floater-nav-navigated') === 'true';
@@ -128,14 +140,7 @@ const isActive = (href: string) => {
     if (wasNavigated && storedPosition && activeLink) {
       try {
         const prevPos = JSON.parse(storedPosition);
-        const currentRect = activeLink.getBoundingClientRect();
-        const navRect = nav.getBoundingClientRect();
-        const currentPos = {
-          left: currentRect.left - navRect.left,
-          top: currentRect.top - navRect.top,
-          width: currentRect.width,
-          height: currentRect.height
-        };
+        const currentPos = getRelativePosition(activeLink);
         
         // Only animate if position actually changed
         if (Math.abs(prevPos.left - currentPos.left) > 1 || 
@@ -175,14 +180,7 @@ const isActive = (href: string) => {
     links.forEach((link) => {
       link.addEventListener('click', () => {
         if (activeLink) {
-          const rect = activeLink.getBoundingClientRect();
-          const navRect = nav.getBoundingClientRect();
-          const position = {
-            left: rect.left - navRect.left,
-            top: rect.top - navRect.top,
-            width: rect.width,
-            height: rect.height
-          };
+          const position = getRelativePosition(activeLink);
           localStorage.setItem('floater-nav-position', JSON.stringify(position));
           // Set flag that this is a navigation, not a refresh
           localStorage.setItem('floater-nav-navigated', 'true');
