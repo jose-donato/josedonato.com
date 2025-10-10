@@ -134,7 +134,7 @@ const videoId = video ? extractYouTubeId(video.url) : null;
         ) : hasPDF ? (
           <PDFViewer pdfPath={`/assets/${post?.data.file}`} />
         ) : (
-          <div class="prose prose-invert prose-lg max-w-none">
+          <div class="prose dark:prose-invert prose-lg max-w-none">
             <Content />
           </div>
         )
