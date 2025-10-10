@@ -34,7 +34,7 @@ const isActive = (href: string) => {
 <div class="flex justify-center items-center mb-8 px-4">
   <nav
     id="floater-nav"
-    class="relative flex transition-all ease-in-out gap-2 bg-bg-secondary/50 backdrop-blur-sm px-2 py-2 border border-border-primary/50 rounded-lg overflow-x-auto shadow"
+    class="relative flex transition-all ease-in-out gap-2 bg-bg-secondary/50 backdrop-blur-sm px-2 py-2 border border-border-primary/50 rounded-lg overflow-hidden shadow"
   >
     <div
       id="active-background"
@@ -47,7 +47,7 @@ const isActive = (href: string) => {
           href={link.href}
           data-link={link.href}
           class:list={[
-            "text-xs sm:text-sm md:text-base font-semibold uppercase tracking-wide transition-colors duration-300 px-6 py-3 relative z-10 whitespace-nowrap rounded-md hover:text-text-secondary",
+            "text-xs sm:text-sm md:text-base font-semibold uppercase tracking-wide transition-colors duration-300 px-3 sm:px-6 py-3 relative z-10 whitespace-nowrap rounded-md hover:text-text-secondary",
             {
               "text-text-primary": isActive(link.href),
               "text-text-muted": !isActive(link.href),
@@ -132,7 +132,7 @@ const isActive = (href: string) => {
     };
 
     // Get stored previous position for animation
-    const storedPosition = localStorage.getItem('floater-nav-position');
+    const storedPosition = localStorage.getItem('floater-nav-pos');
     const wasNavigated = localStorage.getItem('floater-nav-navigated') === 'true';
     let shouldAnimate = false;
     
@@ -181,7 +181,7 @@ const isActive = (href: string) => {
       link.addEventListener('click', () => {
         if (activeLink) {
           const position = getRelativePosition(activeLink);
-          localStorage.setItem('floater-nav-position', JSON.stringify(position));
+          localStorage.setItem('floater-nav-pos', JSON.stringify(position));
           // Set flag that this is a navigation, not a refresh
           localStorage.setItem('floater-nav-navigated', 'true');
         }
