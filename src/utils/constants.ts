@@ -146,6 +146,14 @@ export const HIGHLIGHTS_HOMEPAGE = [
 
 export const PROJECTS: Project[] = [
 	{
+		title: "Flowsurface website",
+		type: "web app",
+		technologies: ["Astro", "TailwindCSS", "Cloudflare"],
+		description: "Landing page for an open-source crypto derivatives market analysis tool with real-time microstructure workstation, footprint clustering, and multi-exchange support.",
+		url: "https://flowsurface.com/",
+		githubUrl: "https://github.com/flowsurface-rs/website",
+	},
+	{
 		title: "OpenBB Workspace",
 		type: "web app",
 		technologies: ["React", "TailwindCSS", "Zustand", "Tanstack/React Query"],
