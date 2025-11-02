@@ -146,6 +146,13 @@ export const HIGHLIGHTS_HOMEPAGE = [
 
 export const PROJECTS: Project[] = [
 	{
+		title: "Crypto Orderbook",
+		type: "web app",
+		technologies: ["Go", "React", "Vite", "WebSocket", "TailwindCSS"],
+		description: "Multi-exchange real-time orderbook with Go backend streaming live orderbooks, stats, and aggregated views for 9+ exchanges including Binance, Bybit, Kraken, OKX, and Coinbase.",
+		url: "https://github.com/jose-donato/crypto-orderbook",
+	},
+	{
 		title: "Flowsurface website",
 		type: "web app",
 		technologies: ["Astro", "TailwindCSS", "Cloudflare"],

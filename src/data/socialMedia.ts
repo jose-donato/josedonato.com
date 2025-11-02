@@ -10,6 +10,13 @@ export interface SocialMediaItem {
 
 export const socialMediaContent: SocialMediaItem[] = [
   {
+    id: '1979955536851243177',
+    type: 'tweet',
+    url: 'https://x.com/josedonato__/status/1979955536851243177',
+    date: '28-01-2025',
+    tags: ['twitter', 'social']
+  },
+  {
     id: '1960431568679292984',
     type: 'tweet',
     url: 'https://x.com/josedonato__/status/1960431568679292984',
