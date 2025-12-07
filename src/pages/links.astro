@@ -158,8 +158,9 @@ const SOCIALS = [
         </p>
       </div>
 
-      <!-- Links Section -->
+      <!-- Exchanges Section -->
       <div class="w-full flex flex-col gap-3 mt-2">
+        <span class="section-label">Exchanges</span>
         {REFERRAL_LINKS.map((link, index) => (
           <a
             href={link.url}
@@ -185,31 +186,31 @@ const SOCIALS = [
         ))}
       </div>
 
-      <!-- Divider -->
-      <div class="w-full h-px bg-gradient-to-r from-transparent via-border-primary to-transparent mt-2"></div>
-
-      <!-- OpenBB -->
-      <a
-        href="https://openbb.co"
-        target="_blank"
-        rel="noreferrer noopener"
-        class="link-card group w-full"
-        style="animation-delay: 500ms"
-      >
-        <div class="flex items-center gap-4">
-          <div class="flex-shrink-0 w-12 h-12 bg-bg-tertiary rounded-xl flex items-center justify-center">
-            <svg viewBox="0 0 255 127" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-7 h-auto text-white"><path d="M151.404 103.189v-7.937h71.733v15.874h-71.733v-7.937Zm0-63.5v-7.937h87.66v15.874h-87.66V39.69Zm95.628-23.815H135.468V127h103.596V79.374h-87.66V63.5H255V15.874h-7.968Zm-215.16 87.315v-7.937h71.733v15.874H31.873v-7.937Zm-15.936-63.5v-7.937h87.66v15.874h-87.66V39.69ZM119.532 0v15.874H0V63.5h103.596v15.874h-87.66V127h103.596V15.874h15.936V0h-15.936Z" fill="currentColor"></path></svg>
+      <!-- Work Section -->
+      <div class="w-full flex flex-col gap-3 mt-4">
+        <span class="section-label">Work</span>
+        <a
+          href="https://openbb.co"
+          target="_blank"
+          rel="noreferrer noopener"
+          class="link-card group"
+          style="animation-delay: 500ms"
+        >
+          <div class="flex items-center gap-4">
+            <div class="flex-shrink-0 w-12 h-12 bg-bg-tertiary rounded-xl flex items-center justify-center">
+              <svg viewBox="0 0 255 127" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-7 h-auto text-text-primary group-hover:text-bullish-400 transition-colors duration-300"><path d="M151.404 103.189v-7.937h71.733v15.874h-71.733v-7.937Zm0-63.5v-7.937h87.66v15.874h-87.66V39.69Zm95.628-23.815H135.468V127h103.596V79.374h-87.66V63.5H255V15.874h-7.968Zm-215.16 87.315v-7.937h71.733v15.874H31.873v-7.937Zm-15.936-63.5v-7.937h87.66v15.874h-87.66V39.69ZM119.532 0v15.874H0V63.5h103.596v15.874h-87.66V127h103.596V15.874h15.936V0h-15.936Z" fill="currentColor"></path></svg>
+            </div>
+            <div class="flex-1 min-w-0">
+              <span class="font-semibold text-text-primary group-hover:text-bullish-400 transition-colors duration-300">OpenBB</span>
+              <p class="text-xs text-text-muted">Building the AI Workspace for Finance</p>
+            </div>
+            <Icon
+              id="ic-outline-arrow-forward"
+              className="w-5 h-5 text-text-muted opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300"
+            />
           </div>
-          <div class="flex-1 min-w-0">
-            <span class="font-semibold text-text-primary group-hover:text-bullish-400 transition-colors duration-300">OpenBB</span>
-            <p class="text-xs text-text-muted">Building the AI Workspace for Finance</p>
-          </div>
-          <Icon
-            id="ic-outline-arrow-forward"
-            className="w-5 h-5 text-text-muted opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300"
-          />
-        </div>
-      </a>
+        </a>
+      </div>
 
       <!-- CTA Button -->
       <a
@@ -285,6 +286,10 @@ const SOCIALS = [
     border-color: var(--border-hover);
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
     transform: translateY(-2px);
+  }
+
+  .section-label {
+    @apply text-xs font-medium uppercase tracking-wider text-text-muted/60 px-1;
   }
 
   .animate-fade-in {
