@@ -273,8 +273,13 @@
 }
 
 @keyframes fadeIn {
-  0% { opacity: 0; }
-  100% { opacity: 1; }
+  0% { opacity: 0; transform: translateY(-10px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInUp {
+  0% { opacity: 0; transform: translateY(20px); }
+  100% { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes pulse-blue {
@@ -309,7 +314,11 @@
 }
 
 .animate-fade-in {
-  animation: fadeIn 0.2s ease-in;
+  animation: fadeIn 0.6s ease-out forwards;
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.5s ease-out forwards;
 }
 
 .animate-pulse-blue {
@@ -406,12 +415,32 @@
   @apply aspect-square h-9 w-9 p-0 flex items-center justify-center;
 }
 
-@utility card {
-  @apply bg-bg-secondary overflow-hidden p-6 border border-border-primary transition-all duration-200 hover:border-border-hover shadow-sm hover:shadow-md rounded-lg;
+/* Enhanced card styles with glassmorphism */
+.card {
+  @apply overflow-hidden p-6 border transition-all duration-300 ease-out rounded-xl;
+  background: color-mix(in srgb, var(--bg-secondary) 80%, transparent);
+  backdrop-filter: blur(8px);
+  border-color: color-mix(in srgb, var(--border-primary) 50%, transparent);
 }
 
-@utility card-interactive {
-  @apply card hover:bg-bg-tertiary cursor-pointer hover:shadow-lg;
+.card:hover {
+  border-color: color-mix(in srgb, var(--bullish-500) 40%, transparent);
+  box-shadow: 0 10px 25px -5px color-mix(in srgb, var(--bullish-500) 10%, transparent);
+  transform: translateY(-2px);
+}
+
+.card-interactive {
+  @apply overflow-hidden p-6 border transition-all duration-300 ease-out rounded-xl cursor-pointer;
+  background: color-mix(in srgb, var(--bg-secondary) 80%, transparent);
+  backdrop-filter: blur(8px);
+  border-color: color-mix(in srgb, var(--border-primary) 50%, transparent);
+}
+
+.card-interactive:hover {
+  background: color-mix(in srgb, var(--bg-tertiary) 90%, transparent);
+  border-color: color-mix(in srgb, var(--bullish-500) 40%, transparent);
+  box-shadow: 0 10px 25px -5px color-mix(in srgb, var(--bullish-500) 10%, transparent);
+  transform: translateY(-2px);
 }
 
 @utility link {
