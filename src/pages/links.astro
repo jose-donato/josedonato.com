@@ -149,18 +149,14 @@ const SOCIALS = [
 
       <div class="w-full h-px bg-gradient-to-r from-transparent via-border-primary to-transparent"></div>
       */}
-
-      <!-- Support Message -->
-      <div class="text-center px-4 animate-fade-in" style="animation-delay: 250ms">
-        <p class="text-text-muted text-sm leading-relaxed">
-          If you find my work useful and want to support me,<br class="hidden sm:block" />
-          consider signing up with one of these exchanges
-        </p>
-      </div>
-
       <!-- Exchanges Section -->
-      <div class="w-full flex flex-col gap-3 mt-2">
-        <span class="section-label">Exchanges</span>
+      <div class="w-full flex flex-col gap-3 mt-2 animate-fade-in" style="animation-delay: 250ms">
+        <div class="section-header">
+          <span class="section-label">Exchanges</span>
+          <p class="text-text-muted text-sm mt-1 px-1">
+            Support my work by signing up with a referral
+          </p>
+        </div>
         {REFERRAL_LINKS.map((link, index) => (
           <a
             href={link.url}
@@ -286,6 +282,10 @@ const SOCIALS = [
     border-color: var(--border-hover);
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
     transform: translateY(-2px);
+  }
+
+  .section-header {
+    @apply mb-1;
   }
 
   .section-label {
