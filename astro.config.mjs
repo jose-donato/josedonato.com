@@ -2,6 +2,7 @@ import cloudflare from "@astrojs/cloudflare";
 import mdx from "@astrojs/mdx";
 import tailwindcss from "@tailwindcss/vite";
 import { defineConfig, envField } from "astro/config";
+import { fileURLToPath } from "node:url";
 
 export default defineConfig({
 	env: {
@@ -23,6 +24,11 @@ export default defineConfig({
 		plugins: [
 			tailwindcss(),
 		],
+		resolve: {
+			alias: {
+				"@": fileURLToPath(new URL("./src", import.meta.url)),
+			},
+		},
 		build: {
 			minify: false,
 		},
