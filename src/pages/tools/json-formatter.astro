@@ -1,0 +1,313 @@
+---
+import Layout from "../../layouts/Layout.astro";
+---
+
+<Layout seo={{ title: "JSON Formatter - Format & Validate JSON | José Donato", description: "Format, beautify and validate JSON with instant feedback. Client-side processing - your data never leaves your browser." }}>
+  <div class="w-full max-w-4xl mx-auto px-4">
+    <h1 class="text-3xl font-bold mb-2 text-center">
+      <span class="underline-animation">JSON</span> Formatter
+    </h1>
+
+    <p class="text-center text-text-muted mb-8">Paste your JSON below and click Format to beautify and validate.</p>
+
+    <div class="space-y-4">
+      <div class="rounded-lg border border-border-primary bg-bg-secondary overflow-hidden">
+        <div class="flex justify-between items-center h-11 px-4 border-b border-border-primary bg-bg-tertiary">
+          <span class="text-sm font-medium text-text-secondary">JSON Input</span>
+          <div class="flex items-center gap-2">
+            <label for="indent" class="text-xs text-text-muted">Indent:</label>
+            <select id="indent" class="h-7 px-2 text-xs rounded border border-border-primary bg-bg-secondary text-text-primary focus:outline-none">
+              <option value="2" selected>2 spaces</option>
+              <option value="4">4 spaces</option>
+            </select>
+          </div>
+        </div>
+        <textarea
+          id="input"
+          placeholder="Paste your JSON here..."
+          spellcheck="false"
+          class="w-full min-h-[200px] p-4 font-mono text-sm leading-relaxed bg-transparent text-text-primary placeholder:text-text-muted resize-y focus:outline-none"
+        ></textarea>
+      </div>
+
+      <div class="flex justify-center gap-3">
+        <button id="formatBtn" class="btn-primary px-8">Format</button>
+        <button id="clearBtn" class="btn">Clear</button>
+      </div>
+
+      <div id="resultSection" class="hidden">
+        <div id="statusBar" class="mb-4 py-2 px-4 rounded-lg text-center text-sm font-medium"></div>
+
+        <div class="rounded-lg border border-border-primary bg-bg-secondary overflow-hidden">
+          <div class="flex justify-between items-center h-11 px-4 border-b border-border-primary bg-bg-tertiary">
+            <span class="text-sm font-medium text-text-secondary">Formatted JSON</span>
+            <div class="flex items-center gap-2">
+              <button id="expandAllBtn" class="h-7 px-2 text-xs rounded border border-border-primary bg-bg-secondary text-text-secondary hover:bg-bg-tertiary hover:text-text-primary transition-colors">Expand All</button>
+              <button id="collapseAllBtn" class="h-7 px-2 text-xs rounded border border-border-primary bg-bg-secondary text-text-secondary hover:bg-bg-tertiary hover:text-text-primary transition-colors">Collapse All</button>
+              <button id="copyBtn" class="h-7 px-2 text-xs rounded border border-border-primary bg-bg-secondary text-text-secondary hover:bg-bg-tertiary hover:text-text-primary transition-colors">Copy</button>
+            </div>
+          </div>
+          <div id="output" class="p-4 font-mono text-[13px] leading-6 overflow-auto max-h-[600px]"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</Layout>
+
+<style>
+  #output {
+    font-variant-ligatures: none;
+  }
+
+  .jf-row {
+    display: block;
+    min-height: 24px;
+  }
+
+  .jf-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    margin-left: 6px;
+    border: 1px solid #3b82f6;
+    border-radius: 3px;
+    background: transparent;
+    color: #3b82f6;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1;
+    cursor: pointer;
+    user-select: none;
+    vertical-align: middle;
+  }
+  .jf-toggle:hover {
+    background: #3b82f6;
+    color: white;
+  }
+
+  .jf-key { color: #dc2626; }
+  .jf-string { color: #059669; }
+  .jf-number { color: #2563eb; }
+  .jf-bool { color: #9333ea; }
+  .jf-null { color: #6b7280; }
+  .jf-bracket { color: var(--text-primary); }
+
+
+  .jf-summary {
+    display: none;
+    color: #6b7280;
+    font-size: 12px;
+  }
+
+  :global(.dark) .jf-key { color: #f87171; }
+  :global(.dark) .jf-string { color: #4ade80; }
+  :global(.dark) .jf-number { color: #60a5fa; }
+  :global(.dark) .jf-bool { color: #c084fc; }
+  :global(.dark) .jf-null { color: #9ca3af; }
+</style>
+
+<script>
+  const inputEl = document.getElementById('input') as HTMLTextAreaElement;
+  const outputEl = document.getElementById('output') as HTMLDivElement;
+  const resultSection = document.getElementById('resultSection') as HTMLDivElement;
+  const statusBar = document.getElementById('statusBar') as HTMLDivElement;
+  const formatBtn = document.getElementById('formatBtn') as HTMLButtonElement;
+  const clearBtn = document.getElementById('clearBtn') as HTMLButtonElement;
+  const copyBtn = document.getElementById('copyBtn') as HTMLButtonElement;
+  const expandAllBtn = document.getElementById('expandAllBtn') as HTMLButtonElement;
+  const collapseAllBtn = document.getElementById('collapseAllBtn') as HTMLButtonElement;
+  const indentSelect = document.getElementById('indent') as HTMLSelectElement;
+
+  let formattedJson = '';
+
+  function getIndentSpaces(): number {
+    return parseInt(indentSelect.value, 10);
+  }
+
+  function makeIndent(depth: number): string {
+    return '\u00A0'.repeat(getIndentSpaces() * depth);
+  }
+
+  function esc(s: string): string {
+    return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  function renderPrimitive(v: unknown): string {
+    if (v === null) return '<span class="jf-null">null</span>';
+    if (typeof v === 'boolean') return `<span class="jf-bool">${v}</span>`;
+    if (typeof v === 'number') return `<span class="jf-number">${v}</span>`;
+    if (typeof v === 'string') return `<span class="jf-string">"${esc(v)}"</span>`;
+    return String(v);
+  }
+
+  function getSummary(v: unknown): string {
+    if (Array.isArray(v)) return `${v.length} item${v.length !== 1 ? 's' : ''}`;
+    if (typeof v === 'object' && v !== null) {
+      const n = Object.keys(v).length;
+      return `${n} propert${n !== 1 ? 'ies' : 'y'}`;
+    }
+    return '';
+  }
+
+  function render(v: unknown, depth: number, isLast: boolean, key?: string): string {
+    const indent = makeIndent(depth);
+    const comma = isLast ? '' : ',';
+    const keyStr = key !== undefined ? `<span class="jf-key">"${esc(key)}"</span>:` : '';
+
+    if (v === null || typeof v !== 'object') {
+      return `<div class="jf-row">${indent}${keyStr}${renderPrimitive(v)}${comma}</div>`;
+    }
+
+    const isArr = Array.isArray(v);
+    const items = isArr ? v : Object.entries(v);
+    const open = isArr ? '[' : '{';
+    const close = isArr ? ']' : '}';
+    const len = isArr ? v.length : Object.keys(v).length;
+
+    if (len === 0) {
+      return `<div class="jf-row">${indent}${keyStr}<span class="jf-bracket">${open}${close}</span>${comma}</div>`;
+    }
+
+    const id = 'j' + Math.random().toString(36).slice(2, 8);
+    let html = '';
+
+    // Opening line with bracket and toggle
+    html += `<div class="jf-row">${indent}${keyStr}<span class="jf-bracket">${open}</span><span class="jf-toggle" data-id="${id}">−</span><span class="jf-summary" data-summary="${id}"> // ${getSummary(v)}</span></div>`;
+
+    // Children container
+    html += `<div class="jf-children" data-children="${id}">`;
+
+    if (isArr) {
+      (v as unknown[]).forEach((item, i) => {
+        html += render(item, depth + 1, i === len - 1);
+      });
+    } else {
+      Object.entries(v).forEach(([k, val], i) => {
+        html += render(val, depth + 1, i === len - 1, k);
+      });
+    }
+
+    // Closing bracket
+    html += `<div class="jf-row jf-close" data-close="${id}">${indent}<span class="jf-bracket">${close}</span>${comma}</div>`;
+    html += '</div>';
+
+    return html;
+  }
+
+  function showStatus(valid: boolean, message?: string) {
+    resultSection.classList.remove('hidden');
+    if (valid) {
+      statusBar.textContent = '✓ Valid JSON';
+      statusBar.className = 'mb-4 py-2 px-4 rounded-lg text-center text-sm font-medium bg-green-500/10 text-green-600 dark:text-green-400 border border-green-500/20';
+    } else {
+      statusBar.textContent = `✗ ${message || 'Invalid JSON'}`;
+      statusBar.className = 'mb-4 py-2 px-4 rounded-lg text-center text-sm font-medium bg-red-500/10 text-red-500 border border-red-500/20';
+    }
+  }
+
+  function format() {
+    const input = inputEl.value.trim();
+    if (!input) {
+      resultSection.classList.add('hidden');
+      return;
+    }
+
+    try {
+      const parsed = JSON.parse(input);
+      formattedJson = JSON.stringify(parsed, null, getIndentSpaces());
+      outputEl.innerHTML = render(parsed, 0, true);
+      showStatus(true);
+      attachListeners();
+    } catch (e) {
+      outputEl.innerHTML = '';
+      formattedJson = '';
+      showStatus(false, (e as Error).message);
+    }
+  }
+
+  function attachListeners() {
+    outputEl.querySelectorAll('.jf-toggle').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = (btn as HTMLElement).dataset.id;
+        if (!id) return;
+
+        const children = document.querySelector(`[data-children="${id}"]`) as HTMLElement;
+        const summary = document.querySelector(`[data-summary="${id}"]`) as HTMLElement;
+
+        if (!children) return;
+
+        const isHidden = children.style.display === 'none';
+
+        if (isHidden) {
+          // Expand this node only
+          children.style.display = 'block';
+          btn.textContent = '−';
+          if (summary) summary.style.display = 'none';
+        } else {
+          // Collapse this and all nested
+          children.style.display = 'none';
+          btn.textContent = '+';
+          if (summary) summary.style.display = 'inline';
+
+          // Also collapse all nested children
+          children.querySelectorAll('.jf-children').forEach(c => {
+            (c as HTMLElement).style.display = 'none';
+          });
+          children.querySelectorAll('.jf-toggle').forEach(t => {
+            t.textContent = '+';
+          });
+          children.querySelectorAll('.jf-summary').forEach(s => {
+            (s as HTMLElement).style.display = 'inline';
+          });
+        }
+      });
+    });
+  }
+
+  function expandAll() {
+    outputEl.querySelectorAll('.jf-children').forEach(el => {
+      (el as HTMLElement).style.display = 'block';
+    });
+    outputEl.querySelectorAll('.jf-toggle').forEach(el => el.textContent = '−');
+    outputEl.querySelectorAll('.jf-summary').forEach(el => (el as HTMLElement).style.display = 'none');
+  }
+
+  function collapseAll() {
+    outputEl.querySelectorAll('.jf-children').forEach(el => {
+      (el as HTMLElement).style.display = 'none';
+    });
+    outputEl.querySelectorAll('.jf-toggle').forEach(el => el.textContent = '+');
+    outputEl.querySelectorAll('.jf-summary').forEach(el => (el as HTMLElement).style.display = 'inline');
+  }
+
+  function clear() {
+    inputEl.value = '';
+    outputEl.innerHTML = '';
+    formattedJson = '';
+    resultSection.classList.add('hidden');
+    inputEl.focus();
+  }
+
+  async function copy() {
+    if (!formattedJson) return;
+    try {
+      await navigator.clipboard.writeText(formattedJson);
+      copyBtn.textContent = 'Copied!';
+      setTimeout(() => copyBtn.textContent = 'Copy', 1500);
+    } catch {}
+  }
+
+  formatBtn.addEventListener('click', format);
+  clearBtn.addEventListener('click', clear);
+  copyBtn.addEventListener('click', copy);
+  expandAllBtn.addEventListener('click', expandAll);
+  collapseAllBtn.addEventListener('click', collapseAll);
+  inputEl.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) format();
+  });
+  indentSelect.addEventListener('change', () => {
+    if (formattedJson) format();
+  });
+</script>

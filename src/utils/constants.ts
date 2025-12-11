@@ -67,6 +67,12 @@ export const TOOLS: Tool[] = [
 		description:
 			"Transform your blog posts into interactive quizzes powered by AI.",
 	},
+	{
+		title: "JSON Formatter",
+		slug: "json-formatter",
+		description:
+			"Format, beautify and validate JSON with instant feedback.",
+	},
 ];
 
 export const EDUCATION = [
