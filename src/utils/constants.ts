@@ -152,6 +152,14 @@ export const HIGHLIGHTS_HOMEPAGE = [
 
 export const PROJECTS: Project[] = [
 	{
+		title: "PageKit",
+		type: "browser extension",
+		technologies: ["JavaScript", "Shadow DOM", "Manifest V3"],
+		description:
+			"A minimal browser extension for Chrome and Firefox with essential web utilities: dark mode toggle, page-to-markdown conversion, and color picker.",
+		url: "https://github.com/jose-donato/PageKit",
+	},
+	{
 		title: "Crypto Orderbook",
 		type: "web app",
 		technologies: ["Go", "React", "Vite", "WebSocket", "TailwindCSS"],
